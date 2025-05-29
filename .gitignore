@@ -1,5 +1,46 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*.cover
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# VSCode
+.vscode/
+
+# Project specific
+data/
+logs/
+*.log
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Byte-compiled / optimized / DLL files
 *.py[cod]
 *$py.class
 
@@ -74,9 +115,6 @@ docs/_build/
 # PyBuilder
 .pybuilder/
 target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
 
 # IPython
 profile_default/
