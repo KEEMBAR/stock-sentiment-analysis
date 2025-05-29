@@ -46,7 +46,8 @@ def parse_dates(df: pd.DataFrame, date_col: str = 'date') -> pd.DataFrame:
         raise ValueError(f"Date column '{date_col}' not found in DataFrame")
     
     try:
-        df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+        # Convert to datetime and remove timezone info to ensure datetime64[ns] dtype
+        df[date_col] = pd.to_datetime(df[date_col]).dt.tz_localize(None)
         logger.info(f"Successfully parsed {date_col} column to datetime")
     except Exception as e:
         logger.error(f"Error parsing dates: {str(e)}")
