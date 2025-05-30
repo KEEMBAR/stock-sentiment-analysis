@@ -44,12 +44,12 @@ def validate_data(df: pd.DataFrame) -> Tuple[bool, Optional[str]]:
     if null_counts.any():
         return False, f"Found null values in columns: {null_counts[null_counts > 0].to_dict()}"
     
-    # Validate date format
-    try:
-        pd.to_datetime(df['date'])
-    except Exception as e:
-        return False, f"Invalid date format in 'date' column: {str(e)}"
-    
+    # Validate date format robustly
+    parsed_dates = pd.to_datetime(df['date'], errors='coerce')
+    if parsed_dates.isnull().any():
+        bad_dates = df.loc[parsed_dates.isnull(), 'date'].unique()
+        return False, f"Some dates could not be parsed: {bad_dates[:5]}{'...' if len(bad_dates) > 5 else ''}"
+        
     return True, None
 
 def load_data(path: str, validate: bool = True) -> pd.DataFrame:
@@ -88,7 +88,7 @@ def load_data(path: str, validate: bool = True) -> pd.DataFrame:
                 raise DataValidationError(error_msg)
         
         # Convert date column to datetime
-        df['date'] = pd.to_datetime(df['date'])
+        df['date'] = pd.to_datetime(df['date'], errors='coerce')
         
         logger.info(f"Successfully loaded {len(df)} rows of data")
         return df

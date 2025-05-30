@@ -1,3 +1,5 @@
+
+
 """
 Data preprocessing module for stock sentiment analysis.
 
@@ -8,6 +10,8 @@ including date parsing, column standardization, and handling missing values.
 import pandas as pd
 import logging
 from typing import Optional
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Configure logging
 logging.basicConfig(
@@ -105,6 +109,45 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
         df = standardize_column_names(df)
         df = parse_dates(df)
         df = handle_missing_values(df)
+        
+        # Assuming df_clean is your preprocessed DataFrame
+        df['headline_length'] = df['headline'].str.len()
+
+        # Basic statistics
+        print(df['headline_length'].describe())
+
+        # Optional: Visualize
+        plt.figure(figsize=(10, 5))
+        sns.histplot(df['headline_length'], bins=50, kde=True)
+        plt.title('Distribution of Headline Lengths')
+        plt.xlabel('Headline Length')
+        plt.ylabel('Frequency')
+        plt.show()
+        
+        publisher_counts = df['publisher'].value_counts()
+        print(publisher_counts.head(10))  # Top 10 publishers
+
+        # Optional: Visualize
+        plt.figure(figsize=(12, 5))
+        sns.barplot(x=publisher_counts.head(10).index, y=publisher_counts.head(10).values)
+        plt.title('Top 10 Most Active Publishers')
+        plt.xlabel('Publisher')
+        plt.ylabel('Number of Articles')
+        plt.xticks(rotation=45, ha='right')
+        plt.show()
+        
+        # Ensure 'date' is datetime
+        df['date'] = pd.to_datetime(df['date'])
+
+        # Count articles per day
+        daily_counts = df.groupby(df['date'].dt.date).size()
+
+        plt.figure(figsize=(15, 5))
+        daily_counts.plot()
+        plt.title('Number of Articles Published per Day')
+        plt.xlabel('Date')
+        plt.ylabel('Number of Articles')
+        plt.show()
         
         logger.info("Data preprocessing completed successfully")
         return df
